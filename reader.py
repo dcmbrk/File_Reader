@@ -1,9 +1,9 @@
-from pypdf import PdfReader
+import os
 import re
+from pypdf import PdfReader
 from sqlalchemy import select
 from connection.db import Session
 from connection.models import Rules, Data
-import os
 
 class Reader():
     def __init__(self, path, type):        
@@ -40,8 +40,7 @@ class Reader():
                 file_path = os.path.join(self.path, file)
 
                 reader = PdfReader(file_path)
-                page = reader.pages[0]
-                text = page.extract_text()
+                text = reader.pages[0].extract_text()
 
                 with Session() as session:
                     with session.begin():
