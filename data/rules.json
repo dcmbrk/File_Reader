@@ -1,0 +1,8 @@
+{
+  "type": "invoice",
+  "regex": {
+    "seller": "^.*",
+    "text_code": "[0-9]{10}",
+    "address": "(?<=\\d\\n)([\\s\\S]+?)(?=\\n\\d)"
+  }
+}
