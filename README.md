@@ -1,6 +1,6 @@
 # PDF READER
 ### Cai dat thu vien:
-`pip install --requirement`
+`pip install -r requirements.txt`
 ### Cai dat ket noi database (SQLAlchemy) trong .env
 `DATABASE-URL= `
 ### Trich xuat thong tin tu file
