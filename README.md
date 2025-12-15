@@ -5,6 +5,8 @@
 `docker-compose up -d`
 ### Cài đặt kết nối databasae (SQLAlchemy) trong .env
 `DATABASE_URL='postgresql+psycopg2://Username:Password@localhost:5432/database'`
+### Import data test
+`python import_data.py'`
 ## Trích xuất thông tin từ file
 `python main.py -file <file-path> <file-type>`
 ## Trích xuất thông tin từ folder
