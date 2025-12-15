@@ -4,7 +4,7 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: YOURPASSWORD
+      POSTGRES_PASSWORD: YOUR_PASSWORD
     ports:
       - "5432:5432"
     volumes:
@@ -13,8 +13,8 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: YOUREMAIL
-      PGADMIN_DEFAULT_PASSWORD: YOURPASSWORD
+      PGADMIN_DEFAULT_EMAIL: YOUR_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: YOUR_PASSWORD
     ports:
       - 8080:80
     volumes:

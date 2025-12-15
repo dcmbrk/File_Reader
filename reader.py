@@ -10,7 +10,6 @@ class Reader():
         self.path = path
         self.type = type
 
-
     def extract_file(self):
         reader = PdfReader(self.path)
         text = reader.pages[0].extract_text()
@@ -63,4 +62,3 @@ class Reader():
         for field, match in regex.items():
             res[field] = re.search(match, text).group()   
         return res
-
