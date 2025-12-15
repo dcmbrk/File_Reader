@@ -37,8 +37,8 @@ class Reader():
     def extract_folder(self):
         for file in os.listdir(self.path):
             if file.endswith('.pdf'):
+                
                 file_path = os.path.join(self.path, file)
-
                 reader = PdfReader(file_path)
                 text = reader.pages[0].extract_text()
 
