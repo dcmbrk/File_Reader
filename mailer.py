@@ -4,55 +4,70 @@ import zipfile
 import tempfile
 from pathlib import Path
 from email.message import EmailMessage
+from dotenv import load_dotenv
+import os
 
-email_sender = "anhson2972005@gmail.com"
-email_password = "mvlxryevppkbrdgr"
-email_receiver = "kurinthefox@gmail.com"
+load_dotenv()
 
-pdf_folder_path = Path("files")
-csv_folder_path = Path("csv")
+class Mailer():
+    def __init__(self,
+                email_sender = os.environ['EMAIL_SENDER'],
+                email_password = os.environ['EMAIL_PASSWORD'],
+                email_receiver = os.environ['EMAIL_RECEIVER'],
+                filename = "csv_data.zip"
+                 ):
+        self.email_sender = email_sender
+        self.email_password = email_password
+        self.email_receiver = email_receiver
+        self.pdf_folder_path = Path(os.environ['PDF_FOLDER'])
+        self.csv_folder_path = Path(os.environ['CSV_FOLDER'])
+        self.zip_file = Path(os.environ['ZIP_FILE'])
+        self.zip_file.unlink(missing_ok=True)
+        self.filename = filename
 
-try:
-    pdf_files = list(pdf_folder_path.rglob("*.pdf"))
-    pdf_count = len(pdf_files)
-    pdf_list_str = "\n".join([f"- {p.name}" for p in pdf_files])
-except FileNotFoundError:
-    pdf_count = 0
-    pdf_list_str = ""
+    def send_mail(self)-> None:
+        em = self.create_email_message()
 
-csv_files = [p for p in csv_folder_path.rglob("*") if p.is_file()]
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
+            smtp.login(self.email_sender, self.email_password)
+            smtp.send_message(em)
 
-subject = f"Báo Cáo Tự Động: Đã xử lý {pdf_count} file PDF"
+    def create_email_message(self) -> EmailMessage:
+        subject, body = self.create_mail_content()
+        zip_byze = self.create_zip_file()
 
-body = f"""
-Tổng số lượng file PDF đã đọc: {pdf_count}
-Danh sách file PDF đã xử lý:
-{pdf_list_str}
-"""
+        em = EmailMessage()
+        em["From"] = self.email_sender
+        em["To"] = self.email_receiver
+        em["Subject"] = subject
+        em.set_content(body)
+        em.add_attachment(
+            zip_byze,
+            maintype="application",
+            subtype="zip",
+            filename= self.filename,
+        )
+        return em
 
-Path("csv.zip").unlink(missing_ok=True)
+    def create_zip_file(self) -> bytes:
+        csv_files = [p for p in self.csv_folder_path.rglob("*") if p.is_file()]
+        with tempfile.TemporaryDirectory() as td:
+            zip_path = Path(td) / self.zip_file
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                for p in csv_files:
+                    zf.write(p, arcname=p.relative_to(self.csv_folder_path))
+            return zip_path.read_bytes()
 
-with tempfile.TemporaryDirectory() as tmpdir:
-    zip_path = Path(tmpdir) / "csv.zip"
+    def create_mail_content(self) -> tuple[str, str]:
+        pdf_files = os.listdir(self.pdf_folder_path)
+        file_list_str = "\n".join([f"- {file}" for file in pdf_files])
+        
+        subject = f"Báo Cáo Tự Động: File Reader"
+        body = f"Danh sách tên pdf file đã xử lý ({len(pdf_files)}):{file_list_str}"
+        
+        return subject, body
 
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
-        for p in csv_files:
-            zf.write(p, arcname=p.relative_to(csv_folder_path))
 
-    em = EmailMessage()
-    em["From"] = email_sender
-    em["To"] = email_receiver
-    em["Subject"] = subject
-    em.set_content(body)
-
-    em.add_attachment(
-        zip_path.read_bytes(),
-        maintype="application",
-        subtype="zip",
-        filename="csv_data.zip",
-    )
-
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
-        smtp.login(email_sender, email_password)
-        smtp.send_message(em)
+mailer = Mailer()
+mailer.send_mail()
