@@ -13,8 +13,8 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: ldtung41@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: Leduytung041a@
+      PGADMIN_DEFAULT_EMAIL: YOUR_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: YOUR_PASSWORD
     ports:
       - 8080:80
     volumes:
