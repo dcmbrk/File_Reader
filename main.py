@@ -14,8 +14,6 @@ def main():
             print("EXTRACTING FOLDER....")
             reader.extract_folder()
             print("DONE....")
-    else:
-        print('Nhap sai')
 
 if __name__ == "__main__":
     main()

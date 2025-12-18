@@ -63,8 +63,8 @@ class Mailer():
         pdf_files = os.listdir(self.pdf_folder_path)
         file_list_str = "\n".join([f"- {file}" for file in pdf_files])
         
-        subject = f"Báo Cáo Tự Động: File Reader"
-        body = f"Danh sách tên pdf file đã xử lý ({len(pdf_files)}):{file_list_str}"
+        subject = f"File Reader"
+        body = f"Files: ({len(pdf_files)}):\n{file_list_str}"
         
         return subject, body
 
