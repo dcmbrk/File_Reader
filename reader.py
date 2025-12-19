@@ -50,7 +50,7 @@ class Reader():
                             data=data.model_dump())
                         session.add(document)
                         print(document.name)
-                        self.export_csv_file(id, document.data)
+                        self.export_csv_file(id, document)
 
 
     def export_csv_file(self, filename, document):

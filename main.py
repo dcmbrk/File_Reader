@@ -19,6 +19,10 @@ def main():
             print("EXTRACTING FOLDER....")
             reader.extract_folder()
             print("DONE....")
+            print("SENDING MAIL....")
+            mailer.send_mail()
+            print("DONE....")
+            
 
 if __name__ == "__main__":
     main()
