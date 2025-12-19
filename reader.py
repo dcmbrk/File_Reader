@@ -73,10 +73,3 @@ class Reader():
             df.to_csv(file_path, index=False, encoding="utf-8-sig")
         else:
             df.to_csv(file_path, mode='a', index=False, header=False, encoding="utf-8-sig")
-
-
-# reader = Reader("files/1C25TMH47_2.pdf")
-# reader.extract_file()
-
-# reader = Reader("files")
-# reader.extract_folder()

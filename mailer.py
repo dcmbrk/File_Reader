@@ -14,7 +14,8 @@ class Mailer():
                 email_sender = os.environ['EMAIL_SENDER'],
                 email_password = os.environ['EMAIL_PASSWORD'],
                 email_receiver = os.environ['EMAIL_RECEIVER'],
-                filename = "csv_data.zip"
+                filename = "csv_data.zip",
+                path = "files"
                  ):
         self.email_sender = email_sender
         self.email_password = email_password
@@ -24,6 +25,7 @@ class Mailer():
         self.zip_file = Path(os.environ['ZIP_FILE'])
         self.zip_file.unlink(missing_ok=True)
         self.filename = filename
+        self.path = path
 
     def send_mail(self)-> None:
         em = self.create_email_message()
@@ -32,6 +34,10 @@ class Mailer():
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
             smtp.login(self.email_sender, self.email_password)
             smtp.send_message(em)
+
+        for file in self.csv_folder_path.glob('*'):
+            if file.is_file():
+                file.unlink()
 
     def create_email_message(self) -> EmailMessage:
         subject, body = self.create_mail_content()
@@ -60,11 +66,14 @@ class Mailer():
             return zip_path.read_bytes()
 
     def create_mail_content(self) -> tuple[str, str]:
-        pdf_files = os.listdir(self.pdf_folder_path)
-        file_list_str = "\n".join([f"- {file}" for file in pdf_files])
-        
+        if self.path.endswith(".pdf"):
+            body = f"Files: {self.path}"
+        else:
+            pdf_files = os.listdir(self.pdf_folder_path)
+            file_list_str = "\n".join([f"- {file}" for file in pdf_files])
+            body = f"Files: ({len(pdf_files)}):\n{file_list_str}"
+
         subject = f"File Reader"
-        body = f"Files: ({len(pdf_files)}):\n{file_list_str}"
         
         return subject, body
 
